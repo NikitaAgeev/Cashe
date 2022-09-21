@@ -1,4 +1,5 @@
 #include <iterator>
+#include <stdlib.h>
 #include <list>
 #include <unordered_map>
 #include <vector>
@@ -7,6 +8,11 @@
 #include <iostream>
 #include <cctype>
 #include <stdio.h>
+#include <assert.h>
+#include <sys/stat.h>
+
+
+
 
 namespace ARC_cach
 {
@@ -159,7 +165,7 @@ namespace ARC_cach
         }
     }
 
-    void lookup_update(KeyT key, T slow_get_page(KeyT key)) 
+    int lookup_update(KeyT key, T slow_get_page(KeyT key)) 
     {
         uint8_t hit_status = cach_find(key);
 
@@ -182,6 +188,9 @@ namespace ARC_cach
             p_ = std::min(sz_, p_ + std::max( (size_t)(B2.size()/B1.size()) , (size_t)1));
             replase(hit_status, key);
             T2.push_top_from_list(key, &B1);
+
+            data_list.push_tf(key, slow_get_page(key));
+            return 1;
         } //case 3
         else if (hit_status & FLG)
         {
@@ -194,6 +203,9 @@ namespace ARC_cach
 
             replase(hit_status, key);
             T2.push_top_from_list(key, &B2);
+
+            data_list.push_tf(key, slow_get_page(key));
+            return 1;
         } //case 4
         else
         {   
@@ -221,8 +233,12 @@ namespace ARC_cach
             }
 
             data_list.push_tf(key, slow_get_page(key));
-            T1.push_tf(key, 0);   
+            T1.push_tf(key, 0); 
+
+            return 1;  
         }
+
+        return 0;
 
     }
 
@@ -246,25 +262,204 @@ namespace ARC_cach
 
 };
 
-int slow_get_page(int key)
+
+
+namespace cach_tester
 {
-    return (int)(key);
+    struct cach_tester_t
+    {
+        
+        //test_info
+        std::list<int> test;
+        size_t sz_;
+        int(*cach_tester)(int elem);
+        
+        //test_result_info
+        size_t ideal_mising_ ;
+        size_t test_mising_ ;
+        
+        //ideal_test_elem_data
+        std::unordered_map <int, std::list<size_t>> ff_table;
+
+        ARC_cach::list_hash_t <int, size_t> mem_list;
+        
+        cach_tester_t (size_t sz, int(cach_tester)(int elem)): sz_(sz), cach_tester(cach_tester) {ideal_mising_ = 0; test_mising_ = 0;};
+
+        
+        void test_add(int elem)
+        {
+            test.push_back(elem);
+        }
+
+        void add_elelm(int elem, size_t iter)
+        {
+            
+            auto searcher = ff_table.find(elem);
+            
+            if(searcher != ff_table.end())
+            {
+                searcher->second.push_back(iter);
+            }
+            else
+            {
+                ff_table.insert({elem, {}});
+
+                auto searcher = ff_table.find(elem);
+                searcher->second.push_back(iter);
+            }
+
+        }
+
+        void test_ff_ininter ()
+        {
+            
+            auto itter = test.begin();
+            size_t i = 0;
+
+            for(itter = test.begin(), i = 0; itter != test.end(); ++itter, i++)
+            {
+                add_elelm(*itter, i);
+            }
+
+        }
+
+        int find_m_far_ff ()
+        {
+            
+            auto itter = mem_list.list.begin();
+            size_t i = 0;
+            int far_elem = -1;
+            size_t len_to_fel = 0;
+
+
+            for(itter = mem_list.list.begin(), i = 0; itter != mem_list.list.end(); ++itter, i++)
+            {
+                auto elem_pos_mas = (ff_table.find(itter->first))->second;
+                
+                if(elem_pos_mas.begin() == elem_pos_mas.end())
+                {
+                    return itter->first;
+                }
+                else if(*(elem_pos_mas.begin()) > len_to_fel)
+                {
+                    len_to_fel = *(elem_pos_mas.begin());
+                    far_elem = itter->first;
+                }
+            }
+
+            return far_elem;
+
+        }
+
+        void start_IDEAL ()
+        {
+            this->test_ff_ininter();
+            
+            auto itter = test.begin();
+            size_t i = 0;
+
+            ideal_mising_ = 0;
+
+            for(itter = test.begin(), i = 0; itter != test.end(); ++itter, i++)
+            {
+                
+                if(mem_list.find(*itter) == mem_list.end())
+                {
+                    if(mem_list.size() < sz_)
+                    {
+                        
+                        mem_list.push_tf(*itter, *itter);
+                        
+                    }
+                    else        
+                    {
+                        
+                        //printf("ID_err %ld: %d\n", i, find_m_far_ff());
+
+                        mem_list.erase(find_m_far_ff());
+                        mem_list.push_tf(*itter, *itter);
+                        
+                        
+                    }
+                    ideal_mising_++;
+                }
+
+                auto it_ff_list = ff_table.find(*itter)->second;
+                
+                if(it_ff_list.begin() != it_ff_list.end())
+                {
+                    ff_table.find(*itter)->second.erase(ff_table.find(*itter)->second.begin());
+                }
+
+            }
+
+        }
+
+        void cash_test()
+        {
+            auto itter = test.begin();
+            size_t i = 0;
+
+            test_mising_ = 0;
+
+            for(itter = test.begin(), i = 0; itter != test.end(); ++itter, i++)
+            {
+                
+                if((*cach_tester)(*itter))
+                {
+                    test_mising_++;
+                }
+
+            }
+        }
+
+
+    };
 }
 
 
+
+ARC_cach::ARS_cach_t<int,int> c (0);
+
+int get_page(int key)
+{
+    return key;
+}
+
+int test_looker(int elem)
+{
+    //c.debug_print();
+    return c.lookup_update(elem, get_page);
+}
+
 int main()
 {
+    
+    printf("Введите размер кеша: ");
+    size_t cach_sz = 0;
+    scanf("%lu", &cach_sz); 
 
+    printf("Введите количество данных: ");
+    size_t n_data = 0;
+    scanf("%lu", &n_data);
+
+    c.sz_ = cach_sz;
     
-    ARC_cach::ARS_cach_t<int,int> c(6);
-    int key, i = 0;
-    while(1)
+    size_t i = 0;
+
+    cach_tester::cach_tester_t test (cach_sz, test_looker);
+
+    int buf = 0;
+    for(i = 0; i < n_data; i++)
     {
-        scanf("%d", &key);
-        c.lookup_update(key, slow_get_page);
-        c.debug_print();    
+        scanf("%d", &buf);
+        test.test_add(buf);
     }
-    c.lookup_update(3, slow_get_page);
-    c.debug_print();
-    
+
+    test.cash_test();
+    test.start_IDEAL();
+
+    printf("cach_miss: %lu\n", test.test_mising_);
+    printf("ideal: %lu\n", test.ideal_mising_);
+
 }
