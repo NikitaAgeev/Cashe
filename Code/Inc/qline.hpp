@@ -99,13 +99,13 @@ namespace qline
 
             //Дебаг, метод
             void list_print()
-        {
-            ListIt iter = this->list.begin();
-            for(size_t i = 0; i < this->size(); i++, ++iter)
             {
-                std::cout << " " << iter->second << " ";
+                ListIt iter = this->list.begin();
+                for(size_t i = 0; i < this->size(); i++, ++iter)
+                {
+                    std::cout << " " << iter->second << " ";
+                }
             }
-        }
 
     };
 #endif

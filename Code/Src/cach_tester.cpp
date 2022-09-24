@@ -25,18 +25,13 @@ namespace cach_tester
     void cach_tester_t::add_elelm(int elem, size_t iter)
     {
         
-        auto searcher = ff_table.find(elem);
-        
-        if(searcher != ff_table.end())
+        if(ff_table.find(elem) != ff_table.end())
         {
-            searcher->second.push_back(iter);
+            ff_table.find(elem)->second.push(iter);
         }
         else
         {
-            ff_table.insert({elem, {}});
-
-            auto searcher = ff_table.find(elem);
-            searcher->second.push_back(iter);
+            ff_table.insert({elem, micro_line_t(iter)});
         }
 
     }
@@ -65,15 +60,14 @@ namespace cach_tester
 
         for(itter = mem_list.begin(), i = 0; itter != mem_list.lend(); ++itter, i++)
         {
-            auto elem_pos_mas = (ff_table.find(itter->second))->second;
             
-            if(elem_pos_mas.begin() == elem_pos_mas.end())
+            if((ff_table.find(itter->second))->second.start_point == nullptr)
             {
                 return itter->second;
             }
-            else if(*(elem_pos_mas.begin()) > len_to_fel)
+            else if((ff_table.find(itter->second))->second.start_point->elem > len_to_fel)
             {
-                len_to_fel = *(elem_pos_mas.begin());
+                len_to_fel = (ff_table.find(itter->second))->second.start_point->elem ;
                 far_elem = itter->second;
             }
         }
@@ -105,8 +99,6 @@ namespace cach_tester
                 else        
                 {
                     
-                    //printf("ID_err %ld: %d\n", i, find_m_far_ff());
-
                     mem_list.erase(find_m_far_ff());
                     mem_list.push_tf(*itter, *itter);
                     
@@ -115,11 +107,10 @@ namespace cach_tester
                 ideal_mising_++;
             }
 
-            auto it_ff_list = ff_table.find(*itter)->second;
             
-            if(it_ff_list.begin() != it_ff_list.end())
+            if(ff_table.find(*itter)->second.start_point != nullptr)
             {
-                ff_table.find(*itter)->second.erase(ff_table.find(*itter)->second.begin());
+                ff_table.find(*itter)->second.pop();
             }
 
         }

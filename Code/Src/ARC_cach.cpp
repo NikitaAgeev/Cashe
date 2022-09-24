@@ -10,6 +10,7 @@
 #include <stdio.h>
 #include <assert.h>
 #include <sys/stat.h>
+#include <time.h>
 
 #include <qline.hpp>
 #include <ARC_cach.hpp>
@@ -32,11 +33,11 @@ int test_looker(int elem)
 int main()
 {
     
-    printf("Введите размер кеша: ");
+    //printf("Введите размер кеша: ");
     size_t cach_sz = 0;
     scanf("%lu", &cach_sz); 
 
-    printf("Введите количество данных: ");
+    //printf("Введите количество данных: ");
     size_t n_data = 0;
     scanf("%lu", &n_data);
 
@@ -53,10 +54,15 @@ int main()
         test.test_add(buf);
     }
 
+    clock_t cach_time = clock();
     test.cash_test(test_looker);
-    test.start_IDEAL();
+    cach_time = clock() - cach_time;
 
-    printf("cach_miss: %lu\n", test.return_test());
-    printf("ideal: %lu\n", test.return_id());
+    clock_t ideal_time = clock();
+    test.start_IDEAL();
+    ideal_time = clock() - ideal_time;
+
+    printf("mycach [%.3lf s]: %lu\n", ((double)cach_time)/CLOCKS_PER_SEC,  test.return_test());
+    printf("idealc [%.3lf s]: %lu\n", ((double)ideal_time)/CLOCKS_PER_SEC, test.return_id());
 
 }
