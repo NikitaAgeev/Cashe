@@ -1,6 +1,6 @@
 
 
-namespace cach_tester
+namespace cache_tester
 {   
 
     #ifndef TESTER
@@ -108,7 +108,7 @@ namespace cach_tester
     };
     
 
-    class cach_tester_t
+    class cache_tester_t
     {
         private:
             //test_info
@@ -126,7 +126,7 @@ namespace cach_tester
             qline::qline_t <int, size_t> mem_list;
         
         public:
-            cach_tester_t (size_t sz): sz_(sz) {ideal_mising_ = 0; test_mising_ = 0;};
+            cache_tester_t (size_t sz): sz_(sz) {ideal_mising_ = 0; test_mising_ = 0;};
 
         
             void test_add(int elem);

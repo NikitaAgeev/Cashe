@@ -1,23 +1,23 @@
 VERSION 	= 1.00
-CC			= g++
+CXX			= g++
 DEBUG 		= -g
-CFLAGS		= -Wall -Wextra -Wpedantic
+CXXFLAGS	= -Wall -Wextra -Wpedantic -O2
 SOURCES	 	=$(wildcard ./Code/Src/*.cpp)
 INCLUDES  	= -I ./Code/Inc
 LIB_NAMES 	=
 LIB_PATH 	= -lm
 OBJ			=$(patsubst %.cpp, %.o, $(SOURCES))
-TARGET		= kesh_
+TARGET		= ceshe_
 
 #links
 $(TARGET):$(OBJ)
 	@mkdir -p progect
-	$(CC) $(OBJ) $(LIB_PATH) $(LIB_NAMES) -o ./progect/$(TARGET)$(VERSION)
+	$(CXX) $(OBJ) $(LIB_PATH) $(LIB_NAMES) -o ./progect/$(TARGET)$(VERSION)
 	@rm -rf $(OBJ)
 	
 #compile
 %.o: %.cpp
-	$(CC) $(DEBUG) -c $(CFLAGS) $< -o $@ $(INCLUDES)
+	$(CXX) $(DEBUG) -c $(CXXFLAGS) $< -o $@ $(INCLUDES)
 
 .PHONY:clean
 clean:

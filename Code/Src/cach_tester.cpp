@@ -14,15 +14,15 @@
 #include <qline.hpp>
 #include <cach_tester.hpp>
 
-namespace cach_tester
+namespace cache_tester
 {
     
-    void cach_tester_t::test_add(int elem)
+    void cache_tester_t::test_add(int elem)
     {
         test.push_back(elem);
     }
 
-    void cach_tester_t::add_elelm(int elem, size_t iter)
+    void cache_tester_t::add_elelm(int elem, size_t iter)
     {
         
         if(ff_table.find(elem) != ff_table.end())
@@ -36,7 +36,7 @@ namespace cach_tester
 
     }
 
-    void cach_tester_t::test_ff_ininter ()
+    void cache_tester_t::test_ff_ininter ()
     {
         
         auto itter = test.begin();
@@ -49,7 +49,7 @@ namespace cach_tester
 
     }
 
-    int cach_tester_t::find_m_far_ff ()
+    int cache_tester_t::find_m_far_ff ()
     {
         
         auto itter = mem_list.begin();
@@ -76,7 +76,7 @@ namespace cach_tester
 
     }
 
-    void cach_tester_t::start_IDEAL ()
+    void cache_tester_t::start_IDEAL ()
     {
         this->test_ff_ininter();
         
@@ -117,7 +117,7 @@ namespace cach_tester
 
     }
 
-    void cach_tester_t::cash_test(int cach_tester (int elelm))
+    void cache_tester_t::cash_test(int cach_tester (int elelm))
     {
         auto itter = test.begin();
         size_t i = 0;
@@ -135,12 +135,12 @@ namespace cach_tester
         }
     }
 
-    size_t cach_tester_t::return_id ()
+    size_t cache_tester_t::return_id ()
     {
         return ideal_mising_;
     }
 
-    size_t cach_tester_t::return_test ()
+    size_t cache_tester_t::return_test ()
     {
         return test_mising_;
     }

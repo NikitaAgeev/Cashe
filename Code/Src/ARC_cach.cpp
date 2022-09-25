@@ -33,11 +33,9 @@ int test_looker(int elem)
 int main()
 {
     
-    //printf("Введите размер кеша: ");
     size_t cach_sz = 0;
     scanf("%lu", &cach_sz); 
 
-    //printf("Введите количество данных: ");
     size_t n_data = 0;
     scanf("%lu", &n_data);
 
@@ -45,7 +43,7 @@ int main()
     
     size_t i = 0;
 
-    cach_tester::cach_tester_t test (cach_sz);
+    cache_tester::cache_tester_t test (cach_sz);
 
     int buf = 0;
     for(i = 0; i < n_data; i++)
@@ -62,7 +60,7 @@ int main()
     test.start_IDEAL();
     ideal_time = clock() - ideal_time;
 
-    printf("mycach [%.3lf s]: %lu\n", ((double)cach_time)/CLOCKS_PER_SEC,  test.return_test());
-    printf("idealc [%.3lf s]: %lu\n", ((double)ideal_time)/CLOCKS_PER_SEC, test.return_id());
+    printf("mycach [%.3lf s]: %lu\n", ((double)cach_time)/CLOCKS_PER_SEC,  n_data - test.return_test());
+    printf("idealc [%.3lf s]: %lu\n", ((double)ideal_time)/CLOCKS_PER_SEC, n_data - test.return_id());
 
 }
