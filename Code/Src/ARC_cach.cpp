@@ -11,6 +11,7 @@
 #include <assert.h>
 #include <sys/stat.h>
 #include <time.h>
+#include <iomanip>
 
 #include <qline.hpp>
 #include <ARC_cach.hpp>
@@ -34,10 +35,10 @@ int main()
 {
     
     size_t cach_sz = 0;
-    scanf("%lu", &cach_sz); 
+    std::cin >> cach_sz; 
 
     size_t n_data = 0;
-    scanf("%lu", &n_data);
+    std::cin >> n_data;
 
     c.change_sz(cach_sz);
     
@@ -48,7 +49,7 @@ int main()
     int buf = 0;
     for(i = 0; i < n_data; i++)
     {
-        scanf("%d", &buf);
+        std::cin >> buf;
         test.test_add(buf);
     }
 
@@ -59,8 +60,20 @@ int main()
     clock_t ideal_time = clock();
     test.start_IDEAL();
     ideal_time = clock() - ideal_time;
+    
+    std::ios old_format(nullptr);
+    old_format.copyfmt(std::cout);
 
-    printf("mycach [%.3lf s]: %lu\n", ((double)cach_time)/CLOCKS_PER_SEC,  n_data - test.return_test());
-    printf("idealc [%.3lf s]: %lu\n", ((double)ideal_time)/CLOCKS_PER_SEC, n_data - test.return_id());
+    std::cout << "mycach  [" << std::fixed;
+    std::cout.precision(3);
+    std::cout << ((double)cach_time)/CLOCKS_PER_SEC;
+    std::cout.copyfmt(old_format);
+    std::cout << " s]: " << n_data - test.return_test() << std::endl;
+    
+    std::cout << "idealch [" << std::fixed;
+    std::cout.precision(3);
+    std::cout << ((double)ideal_time)/CLOCKS_PER_SEC;
+    std::cout.copyfmt(old_format);
+    std::cout << " s]: " << n_data - test.return_id() << std::endl;
 
 }

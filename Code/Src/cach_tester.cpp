@@ -88,6 +88,11 @@ namespace cache_tester
         for(itter = test.begin(), i = 0; itter != test.end(); ++itter, i++)
         {
             
+            if(ff_table.find(*itter)->second.start_point != nullptr)
+            {
+                ff_table.find(*itter)->second.pop();
+            }
+            
             if(mem_list.find(*itter) == mem_list.end())
             {
                 if(mem_list.size() < sz_)
@@ -99,18 +104,11 @@ namespace cache_tester
                 else        
                 {
                     
-                    mem_list.erase(find_m_far_ff());
                     mem_list.push_tf(*itter, *itter);
-                    
+                    mem_list.erase(find_m_far_ff());
                     
                 }
                 ideal_mising_++;
-            }
-
-            
-            if(ff_table.find(*itter)->second.start_point != nullptr)
-            {
-                ff_table.find(*itter)->second.pop();
             }
 
         }
