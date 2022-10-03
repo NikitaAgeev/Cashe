@@ -42,7 +42,7 @@ namespace ARC_cach
 
         //Проверка на присутствие элелемента в управляющих структурах и координация положения
         private:
-            uint8_t cach_find (KeyT key)
+            const uint8_t cach_find (const KeyT key)
             {
                 
                 if (T1.find(key) != T1.end()) return RL;
@@ -56,8 +56,8 @@ namespace ARC_cach
                 return MISS;
             }
 
-        //replaser : удаляет лишние данные из памяти и переносит их упраляющие элементы в мусорку
-            void replase (uint8_t hit_status)
+        //replacer : удаляет лишние данные из памяти и переносит их упраляющие элементы в мусорку
+            void replace (const uint8_t hit_status)
             {
                 if ((T1.size() >= 1) && (((hit_status & FLG) && (T1.size() == p_)) || (T1.size() > p_)))
                 {
@@ -74,7 +74,7 @@ namespace ARC_cach
         public:
 
             //Обновление кеша + возврат 1 если был добавлен новый элемент в память
-            int abdate_cach(KeyT key, T get_elem_to_mem(KeyT key)) 
+            const int apdate_cach(const KeyT key, const T get_elem_to_mem(const KeyT key)) 
             {
                 uint8_t hit_status = cach_find(key);
 
@@ -95,7 +95,7 @@ namespace ARC_cach
                 else if (hit_status & RLG)
                 {
                     p_ = std::min(sz_, p_ + std::max( (size_t)(B2.size()/B1.size()) , (size_t)1));
-                    replase(hit_status);
+                    replace(hit_status);
                     T2.push_top_from_list(key, &B1);
 
                     data_list.push_tf(key, get_elem_to_mem(key));
@@ -110,7 +110,7 @@ namespace ARC_cach
                         p_ = std::max((size_t)0, p_ - dp);
                     }
 
-                    replase(hit_status);
+                    replace(hit_status);
                     T2.push_top_from_list(key, &B2);
 
                     data_list.push_tf(key, get_elem_to_mem(key));
@@ -124,7 +124,7 @@ namespace ARC_cach
                         if (T1.size() < sz_)
                         {
                             B1.pop_be();
-                            replase(hit_status);
+                            replace(hit_status);
                         }
                         else
                         {
@@ -138,7 +138,7 @@ namespace ARC_cach
                         {
                             B2.pop_be();
                         }
-                        replase(hit_status);
+                        replace(hit_status);
                     }
 
                     // добавление нового элемента и его управляющего элемента
@@ -153,9 +153,9 @@ namespace ARC_cach
             }
 
             // Выдаёт элемент из кеша и, если надо, добавляет его в кеш
-            T get_elem( KeyT key, T get_elem_to_mem(KeyT key))
+            const T get_elem( const KeyT key, const T get_elem_to_mem(const KeyT key))
             {
-                this->abdate_cach(key, get_elem_to_mem);
+                this->apdate_cach(key, get_elem_to_mem);
                 return data_list.find(key)->second;
             }
 
@@ -174,7 +174,7 @@ namespace ARC_cach
                 std::cout << "\n";
             }
 
-        void change_sz(size_t size)
+        void change_sz(const size_t size)
         {
             sz_ = size;
         }

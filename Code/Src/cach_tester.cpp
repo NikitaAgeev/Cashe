@@ -17,39 +17,33 @@
 namespace cache_tester
 {
     
-    void cache_tester_t::test_add(int elem)
+    void cache_tester_t::test_add(const int elem)
     {
-        test.push_back(elem);
+        test.push_back({elem, 0});
+        test_len_++;
     }
 
-    void cache_tester_t::add_elelm(int elem, size_t iter)
+    void cache_tester_t::init_test ()
     {
+        auto itter = test.rbegin();
         
-        if(ff_table.find(elem) != ff_table.end())
-        {
-            ff_table.find(elem)->second.push(iter);
-        }
-        else
-        {
-            ff_table.insert({elem, micro_line_t(iter)});
-        }
+        std::unordered_map<int, size_t> elems;
 
+        for(size_t i = test_len_ ; itter != test.rend(); itter++, i--)
+        {
+            if(elems.find(itter->first) == elems.end())
+            {
+                elems[itter->first] = i;
+            }
+            else
+            {
+                itter->second = elems[itter->first];
+                elems[itter->first] = i;
+            }
+        } 
     }
 
-    void cache_tester_t::test_ff_ininter ()
-    {
-        
-        auto itter = test.begin();
-        size_t i = 0;
-
-        for(itter = test.begin(), i = 0; itter != test.end(); ++itter, i++)
-        {
-            add_elelm(*itter, i);
-        }
-
-    }
-
-    int cache_tester_t::find_m_far_ff ()
+    const int cache_tester_t::find_m_far()
     {
         
         auto itter = mem_list.begin();
@@ -61,14 +55,14 @@ namespace cache_tester
         for(itter = mem_list.begin(), i = 0; itter != mem_list.lend(); ++itter, i++)
         {
             
-            if((ff_table.find(itter->second))->second.start_point == nullptr)
+            if(itter->second == 0)
             {
-                return itter->second;
+                return itter->first;
             }
-            else if((ff_table.find(itter->second))->second.start_point->elem > len_to_fel)
+            else if(itter->second > len_to_fel)
             {
-                len_to_fel = (ff_table.find(itter->second))->second.start_point->elem ;
-                far_elem = itter->second;
+                len_to_fel = itter->second;
+                far_elem = itter->first;
             }
         }
 
@@ -78,7 +72,7 @@ namespace cache_tester
 
     void cache_tester_t::start_IDEAL ()
     {
-        this->test_ff_ininter();
+        this->init_test();
         
         auto itter = test.begin();
         size_t i = 0;
@@ -88,34 +82,33 @@ namespace cache_tester
         for(itter = test.begin(), i = 0; itter != test.end(); ++itter, i++)
         {
             
-            if(ff_table.find(*itter)->second.start_point != nullptr)
-            {
-                ff_table.find(*itter)->second.pop();
-            }
-            
-            if(mem_list.find(*itter) == mem_list.end())
+            if(mem_list.find(itter->first) == mem_list.end())
             {
                 if(mem_list.size() < sz_)
                 {
                     
-                    mem_list.push_tf(*itter, *itter);
+                    mem_list.push_tf(itter->first, itter->second);
                     
                 }
                 else        
                 {
                     
-                    mem_list.push_tf(*itter, *itter);
-                    mem_list.erase(find_m_far_ff());
+                    mem_list.push_tf(itter->first, itter->second);
+                    mem_list.erase(find_m_far());
                     
                 }
                 ideal_mising_++;
+            }
+            else
+            {
+                mem_list.find(itter->first)->second->second = itter->second;
             }
 
         }
 
     }
 
-    void cache_tester_t::cash_test(int cach_tester (int elelm))
+    void cache_tester_t::cash_test(const int cach_tester (const int elelm))
     {
         auto itter = test.begin();
         size_t i = 0;
@@ -125,7 +118,7 @@ namespace cache_tester
         for(itter = test.begin(), i = 0; itter != test.end(); ++itter, i++)
         {
             
-            if(cach_tester(*itter))
+            if(cach_tester(itter->first))
             {
                 test_mising_++;
             }
