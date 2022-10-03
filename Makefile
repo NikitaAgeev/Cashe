@@ -11,8 +11,8 @@ TARGET		= ceshe_
 
 #links
 $(TARGET):$(OBJ)
-	@mkdir -p progect
-	$(CXX) $(OBJ) $(LIB_PATH) $(LIB_NAMES) -o ./progect/$(TARGET)$(VERSION)
+	@mkdir -p project
+	$(CXX) $(OBJ) $(LIB_PATH) $(LIB_NAMES) -o ./project/$(TARGET)$(VERSION)
 	@rm -rf $(OBJ)
 	
 #compile
@@ -22,5 +22,5 @@ $(TARGET):$(OBJ)
 .PHONY:clean
 clean:
 	@echo "Remove linked and compiled files......"
-	rm -rf $(OBJ) $(TARGET)$(VERSION) progect
+	rm -rf $(OBJ) $(TARGET)$(VERSION) project
 
