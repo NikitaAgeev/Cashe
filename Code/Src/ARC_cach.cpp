@@ -20,15 +20,15 @@
 
 ARC_cach::ARC_cach_t<int,int> c (0);
 
-const int get_page(const int key)
+int get_page(int key)
 {
     return key;
 }
 
-const int test_looker(const int elem)
+int test_looker(int elem)
 {
     //c.debug_print();
-    return c.apdate_cach(elem, get_page);
+    return c.abdate_cach(elem, get_page);
 }
 
 int main()
