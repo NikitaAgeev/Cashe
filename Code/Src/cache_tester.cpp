@@ -12,7 +12,7 @@
 #include <sys/stat.h>
 
 #include <qline.hpp>
-#include <cach_tester.hpp>
+#include <cache_tester.hpp>
 
 namespace cache_tester
 {
@@ -27,9 +27,9 @@ namespace cache_tester
     {
         auto itter = test.rbegin();
         
-        std::unordered_map<int, size_t> elems;
+        std::unordered_map<int, ssize_t> elems;
 
-        for(size_t i = test_len_ ; itter != test.rend(); itter++, i--)
+        for(ssize_t i = test_len_ ; itter != test.rend(); itter++, i--)
         {
             if(elems.find(itter->first) == elems.end())
             {
@@ -43,13 +43,13 @@ namespace cache_tester
         } 
     }
 
-    const int cache_tester_t::find_m_far()
+    int cache_tester_t::find_m_far()
     {
         
         auto itter = mem_list.begin();
-        size_t i = 0;
+        ssize_t i = 0;
         int far_elem = -1;
-        size_t len_to_fel = 0;
+        ssize_t len_to_fel = 0;
 
 
         for(itter = mem_list.begin(), i = 0; itter != mem_list.lend(); ++itter, i++)
@@ -75,7 +75,7 @@ namespace cache_tester
         this->init_test();
         
         auto itter = test.begin();
-        size_t i = 0;
+        ssize_t i = 0;
 
         ideal_mising_ = 0;
 
@@ -108,17 +108,17 @@ namespace cache_tester
 
     }
 
-    void cache_tester_t::cash_test(const int cach_tester (const int elelm))
+    void cache_tester_t::cash_test(int cache_tester (const int elelm))
     {
         auto itter = test.begin();
-        size_t i = 0;
+        ssize_t i = 0;
 
         test_mising_ = 0;
 
         for(itter = test.begin(), i = 0; itter != test.end(); ++itter, i++)
         {
             
-            if(cach_tester(itter->first))
+            if(cache_tester(itter->first))
             {
                 test_mising_++;
             }
@@ -126,12 +126,12 @@ namespace cache_tester
         }
     }
 
-    size_t cache_tester_t::return_id ()
+    ssize_t cache_tester_t::return_id ()
     {
         return ideal_mising_;
     }
 
-    size_t cache_tester_t::return_test ()
+    ssize_t cache_tester_t::return_test ()
     {
         return test_mising_;
     }

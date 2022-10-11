@@ -62,9 +62,9 @@ namespace qline
                 return hash.end();
             }
 
-            size_t size()
+            ssize_t size()
             {
-                return list.size();
+                return (size_t)list.size();
             }
 
             void erase(KeyT key)

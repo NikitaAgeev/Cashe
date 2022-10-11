@@ -14,37 +14,37 @@
 #include <iomanip>
 
 #include <qline.hpp>
-#include <ARC_cach.hpp>
-#include <cach_tester.hpp>
+#include <ARC_cache.hpp>
+#include <cache_tester.hpp>
 
 
-ARC_cach::ARC_cach_t<int,int> c (0);
+ARC_cache::ARC_cache_t<int,int> c (0);
 
-const int get_page(const int key)
+int get_page(const int key)
 {
     return key;
 }
 
-const int test_looker(const int elem)
+int test_looker(const int elem)
 {
     //c.debug_print();
-    return c.apdate_cach(elem, get_page);
+    return c.update_cache(elem, get_page);
 }
 
 int main()
 {
     
-    size_t cach_sz = 0;
-    std::cin >> cach_sz; 
+    ssize_t cache_sz = 0;
+    std::cin >> cache_sz; 
 
-    size_t n_data = 0;
+    ssize_t n_data = 0;
     std::cin >> n_data;
 
-    c.change_sz(cach_sz);
+    c.change_sz(cache_sz);
     
-    size_t i = 0;
+    ssize_t i = 0;
 
-    cache_tester::cache_tester_t test (cach_sz);
+    cache_tester::cache_tester_t test (cache_sz);
 
     int buf = 0;
     for(i = 0; i < n_data; i++)
@@ -53,9 +53,9 @@ int main()
         test.test_add(buf);
     }
 
-    clock_t cach_time = clock();
+    clock_t cache_time = clock();
     test.cash_test(test_looker);
-    cach_time = clock() - cach_time;
+    cache_time = clock() - cache_time;
 
     clock_t ideal_time = clock();
     test.start_IDEAL();
@@ -64,9 +64,9 @@ int main()
     std::ios old_format(nullptr);
     old_format.copyfmt(std::cout);
 
-    std::cout << "mycach  [" << std::fixed;
+    std::cout << "mycache  [" << std::fixed;
     std::cout.precision(3);
-    std::cout << ((double)cach_time)/CLOCKS_PER_SEC;
+    std::cout << ((double)cache_time)/CLOCKS_PER_SEC;
     std::cout.copyfmt(old_format);
     std::cout << " s]: " << n_data - test.return_test() << std::endl;
     
